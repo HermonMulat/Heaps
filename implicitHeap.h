@@ -9,23 +9,21 @@ class MinHeap
 public:
     // Constructor
     MinHeap(int capacity);
+    // utility functions
+    int size(){ return heap_size; }
 
     // ops to restore heap property
-    void siftUp(int index);
-    void siftDown(int index);
+    void siftUp(int i);
+    void siftDown(int i);
 
     // parent and child accecsor methods
-    int getParent(int index) { return (index-1)/2; }
-    int getLeftChild(int index) { return (2*index + 1); }
-    int getRightChild(int index) { return (2*index + 2); }
+    int parent(int i) { return (i-1)/2; }
+    int left(int i) { return (2*i + 1); }
+    int right(int i) { return (2*i + 2); }
 
-    int pop(); // remove and return min
     int getMin() { return arr[0]; } // return min but don't remove
+    int extractMin(); // remove and return min
 
-    void decreaseKey(int index, int new_val);
-    void increaseKey(int index, int new_val);
-
-    void deleteKey(int index);
     void insertKey(int key);
 };
 

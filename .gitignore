@@ -2,3 +2,6 @@
 *.o
 *.c
 *.out
+
+# also ignore test files (my test files will have extensions .in and .out)
+*.in
