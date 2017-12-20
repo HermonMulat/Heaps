@@ -1,4 +1,5 @@
 #include "implicitHeap.h"
+#include "pairingHeap.h"
 #include <iostream>
 #include <stdlib.h>
 #include <fstream>
@@ -8,14 +9,18 @@
 command:
     ./<test_executable> <n> <infile> <outfile>
 
-This will generate a heap based on a list of <n> insert and delete operations. The
-resulting heap is checked against the <outfile>
+This will generate a heap based on a list of <n> insert and delete operations.
+The resulting heap is checked against the <outfile>
+
+Pass a dummy value of <n> for testing a pairing heap, since <n> is not needed
+for pairing heap
 */
 
 using namespace std;
 
 int main(int argc, char *argv[]){
-    MinHeap h(atoi(argv[1]));
+    //MinHeap h(atoi(argv[1]));
+    PairingHeap h = PairingHeap();
     ifstream operations(argv[2]);
     char op;
     int num;
