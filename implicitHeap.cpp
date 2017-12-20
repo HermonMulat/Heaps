@@ -26,7 +26,8 @@ int MinHeap::extractMin(){
 }
 
 void MinHeap::insertKey(int key){
-    if (heap_size == capacity){ // if we want, we could realloc here
+    if (heap_size == capacity){
+        // if we want, we could realloc here, like double size of array
         cout << "Heap capacity exceeded" << '\n';
         return;
     }
@@ -52,11 +53,17 @@ void MinHeap::siftDown(int i){
     int min_val = curr_val,min_index = i;
     while(i<heap_size){
         // First indentify if either child is smaller (and the i)
-        if (left(i)< heap_size && arr[min_index] > arr[left(i)]){
-            min_index = left(i);
+        if (c1(i)< heap_size && arr[min_index] > arr[c1(i)]){
+            min_index = c1(i);
         }
-        if (right(i) < heap_size && arr[min_index] > arr[right(i)]){
-            min_index = right(i);
+        if (c2(i) < heap_size && arr[min_index] > arr[c2(i)]){
+            min_index = c2(i);
+        }
+        if (c3(i)< heap_size && arr[min_index] > arr[c3(i)]){
+            min_index = c3(i);
+        }
+        if (c4(i) < heap_size && arr[min_index] > arr[c4(i)]){
+            min_index = c4(i);
         }
         if (min_index == i){
             return; // Done - minHeap property is repected

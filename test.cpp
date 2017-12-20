@@ -38,10 +38,10 @@ int main(int argc, char *argv[]){
         n = h.extractMin();
         if (n != num){
             cout << "Expected "<<num << " got " << n << endl;
-            cout << "Doesn't match. Test Failed\n";
+            cout << "Doesn't match. Test Failed!\n";
             return -1;
         }
     }
-    cout << "Mission Accomplished" << endl ;
+    cout << "Mission Accomplished!" << endl ;
     return 0;
 }
