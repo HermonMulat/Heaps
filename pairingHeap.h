@@ -29,11 +29,12 @@ class PairingHeap
         int heap_size;
         void merge(PairNode *&first, PairNode* second);
         PairNode *combineSiblings(PairNode *firstSibling);
+        void kill(PairNode* p);
 
     public:
         PairingHeap();
         PairingHeap(int key);
-        //~PairingHeap();
+        ~PairingHeap();
 
         int size();
         int getMin();

@@ -31,6 +31,21 @@ PairingHeap::PairingHeap(int key)
     heap_size = 1;
 }
 
+PairingHeap::~PairingHeap()
+{
+    kill(root);
+}
+
+void PairingHeap::kill(PairNode* p)
+{
+    if (p)
+    {
+        kill(p->child);
+        kill(p->next);
+        FREE(p);
+    }
+}
+
 int PairingHeap::size()
 {
     return heap_size;
