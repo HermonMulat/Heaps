@@ -1,19 +1,20 @@
 #ifndef pairing_h
 #define pairing_h
 
-#include <iostream>
+#include <stdint.h>
 #include <cstdlib>
-#include <vector>
+#include <iostream>
+
 using namespace std;
 
 class PairNode
 {
     public:
-        int data;
+        uint64_t data;
         PairNode *child;
         PairNode *next;
         PairNode *prev;
-        PairNode(int key)
+        PairNode(uint64_t key)
         {
             this->data = key;
             child = NULL;
@@ -29,17 +30,16 @@ class PairingHeap
         int heap_size;
         void merge(PairNode *&first, PairNode* second);
         PairNode *combineSiblings(PairNode *firstSibling);
-        void kill(PairNode* p);
 
     public:
         PairingHeap();
-        PairingHeap(int key);
+        PairingHeap(uint64_t key);
         ~PairingHeap();
 
-        int size();
-        int getMin();
-        void insert(int key);
-        int extractMin();
+        uint64_t size();
+        uint64_t getMin();
+        void insert(uint64_t key);
+        uint64_t extractMin();
 };
 
 #endif

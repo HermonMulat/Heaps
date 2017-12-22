@@ -1,15 +1,12 @@
 #include "pairingHeap.h"
-#include <stdlib.h>
 #include <vector>
-#include <iostream>
-
 #define MALLOC(size) (malloc(size))
 #define REALLOC(pointer,size) (realloc(pointer,size))
 #define FREE(pointer) (free(pointer))
 
 using namespace std;
 
-PairNode* allocateNode(int key){
+PairNode* allocateNode(uint64_t key){
     PairNode* n = (PairNode *) MALLOC(sizeof(PairNode));
     if (n == NULL) exit(-1);
     n->next = NULL;
@@ -25,7 +22,7 @@ PairingHeap::PairingHeap()
     heap_size = 0;
 }
 
-PairingHeap::PairingHeap(int key)
+PairingHeap::PairingHeap(uint64_t key)
 {
     root = allocateNode(key);
     heap_size = 1;
@@ -33,25 +30,37 @@ PairingHeap::PairingHeap(int key)
 
 PairingHeap::~PairingHeap()
 {
-    kill(root);
-}
-
-void PairingHeap::kill(PairNode* p)
-{
-    if (p)
+    PairNode** toFree = (PairNode**) MALLOC(heap_size*sizeof(PairNode*));
+    toFree[0] = root;
+    int index = 0, lastFree = 1;
+    while (index < lastFree)
     {
-        kill(p->child);
-        kill(p->next);
-        FREE(p);
+        if (toFree[index])
+        {
+            if (toFree[index]->next)
+            {
+                toFree[lastFree] = toFree[index]->next;
+                lastFree++;
+            }
+            if (toFree[index]->child)
+            {
+                toFree[lastFree] = toFree[index]->child;
+                lastFree++;
+            }
+            FREE(toFree[index]);
+            heap_size--;
+        }
+        index++;
     }
+    FREE(toFree);
 }
 
-int PairingHeap::size()
+uint64_t PairingHeap::size()
 {
     return heap_size;
 }
 
-int PairingHeap::getMin()
+uint64_t PairingHeap::getMin()
 {
     if (root)
         return root->data;
@@ -59,7 +68,7 @@ int PairingHeap::getMin()
     return -1;
 }
 
-void PairingHeap::insert(int key)
+void PairingHeap::insert(uint64_t key)
 {
     PairNode *p = allocateNode(key);
 
@@ -71,14 +80,14 @@ void PairingHeap::insert(int key)
     heap_size++;
 }
 
-int PairingHeap::extractMin()
+uint64_t PairingHeap::extractMin()
 {
     if (heap_size == 0)
     {
         cout << "Heap is empty!" << endl;
         return -1;
     }
-    int minVal = root->data;
+    uint64_t minVal = root->data;
     PairNode *oldRoot = root;
     if (root->child != NULL)
         root = combineSiblings(root->child);
