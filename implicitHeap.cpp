@@ -64,7 +64,7 @@ void MinHeap::siftDown(int i)
             min_index = c1(i);
         if (c2(i) < heap_size && arr[min_index] > arr[c2(i)])
             min_index = c2(i);
-        if (c3(i)< heap_size && arr[min_index] > arr[c3(i)]){
+        if (c3(i)< heap_size && arr[min_index] > arr[c3(i)])
             min_index = c3(i);
         if (c4(i) < heap_size && arr[min_index] > arr[c4(i)])
             min_index = c4(i);

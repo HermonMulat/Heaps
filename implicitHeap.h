@@ -5,9 +5,9 @@ class MinHeap
 // This is 4-ary implementation
 {
     private:
-        int *arr; // pointer to array of elements in heap
-        int capacity; // maximum possible size of min heap
-        int heap_size; // Current number of elements in min heap
+        int *arr;       // pointer to array of elements in heap
+        int capacity;   // maximum possible size of min heap
+        int heap_size;  // Current number of elements in min heap
 
     public:
         // Constructor
