@@ -1,9 +1,10 @@
-#include "implicitHeap.h"
+//#include "implicitHeap.h"
 #include "pairingHeap.h"
 #include <iostream>
 #include <stdlib.h>
 #include <fstream>
 #include <math.h>
+
 
 /*
 command:
@@ -20,14 +21,15 @@ using namespace std;
 
 int main(int argc, char *argv[]){
     //MinHeap h(atoi(argv[1]));
-    PairingHeap h = PairingHeap();
+    PairingHeap h;
+    //PairingHeap h = PairingHeap();
     ifstream operations(argv[2]);
     char op;
     int num;
     while(operations >> op){
         if (op == 'I'){
             operations >> num;
-            h.insertKey(num);
+            h.insert(num);
         }
         else{
             h.extractMin();
@@ -37,7 +39,7 @@ int main(int argc, char *argv[]){
     ifstream expected(argv[3]);
     num = -1;
     int n = 0;
-    cout << "Heap size - " << h.size() << endl;
+    //cout << "Heap size - " << h.size() << endl;
     while (h.size()){
         expected >> num;
         n = h.extractMin();

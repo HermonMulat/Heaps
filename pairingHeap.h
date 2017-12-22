@@ -1,38 +1,44 @@
 #ifndef pairing_h
 #define pairing_h
 
-#include <stdlib.h>
+#include <iostream>
+#include <cstdlib>
 #include <vector>
+using namespace std;
 
-typedef struct Node{
-    int data;
-    struct Node *prev;
-    struct Node *next;
-    struct Node *child;
-} Node_t;
+class PairNode
+{
+    public:
+        int data;
+        PairNode *child;
+        PairNode *next;
+        PairNode *prev;
+        PairNode(int key)
+        {
+            this->data = key;
+            child = NULL;
+            next = NULL;
+            prev = NULL;
+        }
+};
 
 class PairingHeap
 {
-public:
-    Node_t *root;
-    int heap_size; // Current number of elements in min heap
+    private:
+        PairNode *root;
+        int heap_size;
+        void merge(PairNode *&first, PairNode* second);
+        PairNode *combineSiblings(PairNode *firstSibling);
 
-    void merge(PairingHeap p);
+    public:
+        PairingHeap();
+        PairingHeap(int key);
+        //~PairingHeap();
 
-    // Constructors - for empty heap, or with 1 element
-    PairingHeap();
-    PairingHeap(int key);
-    // TODO: Define and complete A Destructor
-    //~PairingHeap();
-
-    // utility functions
-    int size(){ return heap_size; }
-
-    int getMin() { return root->data; } // return min but don't remove
-    int extractMin(); // remove and return min
-
-    void insertKey(int key);
-
+        int size();
+        int getMin();
+        void insert(int key);
+        int extractMin();
 };
 
 #endif

@@ -4,113 +4,134 @@
 #include <iostream>
 
 #define MALLOC(size) (malloc(size))
+#define REALLOC(pointer,size) (realloc(pointer,size))
 #define FREE(pointer) (free(pointer))
 
 using namespace std;
 
-// prototype for an internal helper 
-Node_t* combineNodes(vector<Node_t*> &paired);
+PairNode* allocateNode(int key){
+    PairNode* n = (PairNode *) MALLOC(sizeof(PairNode));
+    if (n == NULL) exit(-1);
+    n->next = NULL;
+    n->prev = NULL;
+    n->child = NULL;
+    n->data = key;
+    return n;
+}
 
-PairingHeap::PairingHeap(){
+PairingHeap::PairingHeap()
+{
     root = NULL;
     heap_size = 0;
 }
 
-PairingHeap::PairingHeap(int key){
-    root = (Node_t *) MALLOC(sizeof(Node_t));
-    if (root == NULL) exit(-1);
-    root->next = NULL;
-    root->prev = NULL;
-    root->child = NULL;
-    root->data = key;
+PairingHeap::PairingHeap(int key)
+{
+    root = allocateNode(key);
     heap_size = 1;
 }
 
-void PairingHeap::insertKey(int key){
-    PairingHeap p = PairingHeap(key);
-    merge(p);
-    heap_size += 1;
+int PairingHeap::size()
+{
+    return heap_size;
 }
 
-int PairingHeap::extractMin(){
-    int min_val = root->data;
-    int parity = 0;
-    Node_t *current = root->child, *prev = NULL, *temp = NULL;
-    vector<Node_t *> paired;
-    PairingHeap h1 = PairingHeap(), h2 = PairingHeap();
-    // pairing
-    while (current){
-        if (parity%2){
-            h1.root = prev;
-            h2.root = current;
-            // disconnect prev and current nodes
-            temp = current->next;
-            prev->prev = NULL; prev->next = NULL;
-            current->prev = NULL; current->next = NULL;
-            // Pair two in a row and store resulting node to list
-            h1.merge(h2);
-            paired.push_back(h1.root);
-            current = temp;
-        }
-        else{
-            prev = current;
-            current = prev->next;
-        }
-        parity++;
-    }
-    // if we have one more sibling node (happens if we have odd # of siblings)
-    if (parity%2){
-        paired.push_back(prev);
-    }
-    // back merge
-    FREE(root);
-    root = combineNodes(paired);
-    heap_size --;
-    return min_val;
+int PairingHeap::getMin()
+{
+    if (root)
+        return root->data;
+    cout << "Heap is empty!" << endl;
+    return -1;
 }
 
-Node_t* combineNodes(vector<Node_t*> &paired){
-    if (paired.size() == 0){
-        return NULL;
-    }
-    PairingHeap h1 = PairingHeap(), h2 = PairingHeap();
-    int i = paired.size()-2;
-    h1.root = paired[i+1]; // last element
-    while (i>=0) {
-        h2.root = paired[i];
-        h1.merge(h2);
-        i--;
-    }
-    return h1.root;
+void PairingHeap::insert(int key)
+{
+    PairNode *p = allocateNode(key);
+
+    if (root == NULL)
+        root = p;
+    else
+        merge(root,p);
+
+    heap_size++;
 }
 
-void PairingHeap::merge(PairingHeap p){
-    if (p.root == NULL){
+int PairingHeap::extractMin()
+{
+    if (heap_size == 0)
+    {
+        cout << "Heap is empty!" << endl;
+        return -1;
+    }
+    int minVal = root->data;
+    PairNode *oldRoot = root;
+    if (root->child != NULL)
+        root = combineSiblings(root->child);
+    else
+        root = NULL;
+    heap_size--;
+    FREE(oldRoot);
+    return minVal;
+}
+
+void PairingHeap::merge(PairNode *&first, PairNode* second)
+{
+    if (second == NULL)
         return;
-    }
-    if (root == NULL){
-        root = p.root;
-        return;
-    }
 
-    Node_t *temp;
-    if (p.getMin() > getMin()){
-        temp = root->child;
-        // insert new sub tree as left child
-        root->child = p.root;
-        p.root->prev = root;
-        // make new left child point to previous left child
-        p.root->next = temp;
-        if (temp) temp->prev = root->child; // same as p.root
+    if (second->data < first->data)
+    {
+        first->prev = second;
+        first->next = second->child;
+        if (second->child)
+            second->child->prev = first;
+        second->child = first;
+        first = second;
     }
+    else
+    {
+        second->prev = first;
+        second->next = first->child;
+        if (first->child)
+            first->child->prev = second;
+        first->child = second;
+    }
+}
 
-    else{
-        temp = p.root->child;
-        p.root->child = root;
-        root->prev = p.root;
-        root->next = temp;
-        if (temp) temp->prev = root;
-        // now make p root the root of the whole tree
-        root = p.root;
+// A Helper method to double the size of the array
+PairNode** doubleSize(PairNode **array, int &current){
+    current *=2;
+    PairNode **new_a = (PairNode**)REALLOC(array,current*sizeof(PairNode*));
+    if (new_a == NULL) {
+        cout << "Realloc failed" << endl;
+        exit(-1);
     }
+    return new_a;
+}
+
+PairNode *PairingHeap::combineSiblings(PairNode *firstSibling)
+{
+    if (firstSibling->next == NULL)
+        return firstSibling;
+
+    PairNode** siblings = (PairNode**) MALLOC(5*sizeof(PairNode*));
+    // first count siblings, also disconnect siblings as we go
+    int siblingCount = 0, arraySize = 5;
+    while (firstSibling)
+    {
+        if (siblingCount == arraySize)
+            siblings = doubleSize(siblings,arraySize);
+        siblings[siblingCount] = firstSibling;
+        firstSibling->prev->next = NULL;
+        firstSibling->prev = NULL;
+        firstSibling = firstSibling->next;
+        siblingCount++;
+    }
+    // Forward merge
+    for (int i=0; i<(siblingCount/2); i++)
+        merge(siblings[2*i],siblings[2*i + 1]);
+    // Backward merge
+    for (int j=(siblingCount-1)/2; j>0; j--)
+        merge(siblings[2*(j-1)],siblings[2*j]);
+    return siblings[0];
 }
